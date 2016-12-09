@@ -8,30 +8,28 @@
     <link rel="stylesheet" href="dist/css/map.css" >
     <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="js/knockout-3.4.1.js"></script>
-    <script src='js/knockout-projections.min.js'></script>
     <script type="text/javascript" src="dist/js/bootstrap.min.js"></script>
-   <!--  <script type="text/javascript" src="js/config.js"></script>  -->
+    <script type="text/javascript" src="js/oauth-signature.min.js"></script> 
    
   <!--  <script type="text/javascript" src="js/mapsapplication.js"></script> -->
  </head>
  <body>
   <div class="container">
 <div class="options-box">
-<span class="text">Choose a place </span><br />
-  <input id="toggle-drawing" type="button" value="Drawing Tools">
   <div class="panel panel-default">
         <div class="panel-heading">Your preferred restaurants</div>
 
-<input type="text" class="form-control input-sm"  data-bind="textInput: filter" placeholder="Search" />
+<input type="text" class="form-control input-sm"  data-bind="textInput: filter, event: {mouseover: hideListings, mouseout: showListings}" placeholder="Search" />
  
 
         <div class="panel-body" data-bind="foreach: filteredItems">
-          <p data-bind="text: title"></p>
+          <p data-bind="text: title, click: $parent.showInfo"></p>
         </div>
+        <div id="suggestions"></div>
       </div>
 </div>
   </div>
-   <div id="map"></div>
+   <div id="map" data-bind="visible: showMapMessage"><p>No map could be loaded</p></div>
 
    
    

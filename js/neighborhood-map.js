@@ -4,13 +4,13 @@ var Model = {
 map: null,
 
 locations: [
-  {title: 'To Steki', location: {lat: 44.4966597, lng: 11.3475139}},
-  {title: 'Va Mo La', location: {lat: 44.4981909, lng: 11.3453459}},
-  {title: 'La bottega di un chicco', location: {lat: 44.4902791, lng: 11.3489778}},
-  {title: 'Camera a Sud', location: {lat: 44.4953182, lng: 11.346849}},
-  {title: 'Pizzartist Marsala', location: {lat: 44.496723, lng: 11.3452852}},
-  {title: 'Pizzeria Aldrovandi', location: {lat: 44.4938507, lng: 11.3495809}},
-  {title: 'Pane e Panelle', location: {lat: 44.4939909, lng: 11.353186}}
+  {title: 'To Steki', location: {lat: 44.4966635, lng: 11.3475192}},
+  {title: 'Va Mo La', location: {lat: 44.4981947, lng: 11.3453512}},
+  {title: 'La bottega di un chicco', location: {lat: 44.4906848, lng: 11.3475381}},
+  {title: 'Camera a Sud', location: {lat: 44.4963092, lng: 11.345127}},
+  {title: 'Pizzartist Marsala', location: {lat: 44.4967268, lng: 11.3452905}},
+  {title: 'Pizzeria Aldrovandi', location: {lat: 44.4938545, lng: 11.3495862}},
+  {title: 'Pane e Panelle', location: {lat: 44.4939947, lng: 11.3531913}}
 ]
  };
 
@@ -19,21 +19,31 @@ var ViewModel = function() {
     // functions to add markers, show data, filter locations, 
     //update infowindow content etc.
     // Run API calls to get data 
-    
 
+ 
+    const YELP_BASE_URL = "https://api.yelp.com/v2/";
+    const YELP_KEY = "G3gWGS2XU4pO96hRqsYfug";
+    const YELP_TOKEN = "rQIuADbleGHxUfckiJbhMHzfM0PUe7bv";
+    const YELP_KEY_SECRET = "Hrj_9ufk6CnCYiifWKXmnJS1xpQ";
+    const YELP_TOKEN_SECRET = "K-5qKB_mMpk8mEcoAEIG1UotN9M";
     var self = this;
     self.showMapMessage = ko.observable(false);
     self.showErrorMessage = ko.observable(false);
     self.places = ko.observableArray();
     self.filter = ko.observable('');
-    //self.filteredItems = ko.observableArray();
+    
+    // if(Model.map == null){
+    //     self.showMapMessage(true);
+    //   } else {
+    //     self.showMapMessage(false);
+    //   }
     var placesModel = function(item){
         this.position = item.location;
         this.title = item.title;
     };
    
 
-
+  var largeInfowindow = new google.maps.InfoWindow();
   //var largeInfowindow = new google.maps.InfoWindow();
 	for (var i = 0; i < Model.locations.length; i++) {
           // Get the position from the location array.
@@ -46,26 +56,79 @@ var ViewModel = function() {
             map: Model.map
           });
          self.places.push(marker);
-         console.log(self.places()[i].title);
+         marker.addListener('click', function() {
+          populateInfoWindow(this, largeInfowindow);
+        });
           }
+     
+      // function to show marker when mouseover the form
+      self.showInfo = function(value){
+          populateInfoWindow(value, largeInfowindow);
+        };
+      // function to retrieve data from Yelp API
+      function nonce_generate() {
+        return (Math.floor(Math.random() * 1e12).toString());
+      }
+      self.yelpdata = function(value){
+          var yelp_url = YELP_BASE_URL + 'search?location=bologna&term=food&cll=' 
+          + value.position.lat + ',' + value.position.lng + '&limit=3';
+
+          var parameters = {
+            oauth_consumer_key: YELP_KEY,
+            oauth_token: YELP_TOKEN,
+            oauth_nonce: nonce_generate(),
+            oauth_timestamp: Math.floor(Date.now()/1000),
+            oauth_signature_method: 'HMAC-SHA1',
+            oauth_version : '1.0',
+            callback: 'cb' // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
+          };
+
+          var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, YELP_KEY_SECRET, YELP_TOKEN_SECRET);
+          parameters.oauth_signature = encodedSignature;
+
+          var settings = {
+            url: yelp_url,
+            data: parameters,
+            cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
+            dataType: 'jsonp',
+            success: function(results) {
+              $.each(results, function(index, element) {
+                  $('#suggestions').append('<p><a href="'+ 
+                    element.businesses.url +'">'+element.businesses.name+'</a></p>')
+                  });
+                  },
+            
+            fail: function() {
+              "No other suggestions could be loaded";
+            }
+          };
+
+          // Send AJAX query via jQuery library.
+          $.ajax(settings);
+      };
+
+
+
+
 
     // This function will loop through the markers array and display them all.
-      // function showListings() {
-      //   var bounds = new google.maps.LatLngBounds();
-      //   // Extend the boundaries of the map for each marker and display the marker
-      //   for (var i = 0; i < markers.length; i++) {
-      //     markers[i].setMap(map);
-      //     bounds.extend(markers[i].position);
-      //   }
-      //   map.fitBounds(bounds);
-      // }
-
-      // // This function will loop through the listings and hide them all.
-      function hideListings() {
-        for (var i = 0; i < markers.length; i++) {
-          markers[i].setMap(null);
+    self.showListings = function () {
+        var bounds = new google.maps.LatLngBounds();
+        // Extend the boundaries of the map for each marker and display the marker
+        for (var i = 0; i < self.filteredItems().length; i++) {
+          self.filteredItems()[i].setMap(Model.map);
+          bounds.extend(self.filteredItems()[i].position);
         }
-      }
+        Model.map.fitBounds(bounds);
+      };
+      
+      
+      // // This function will loop through the listings and hide them all.
+    self.hideListings =  function () {
+        for (var i = 0; i < self.places().length; i++) {
+          self.places()[i].setMap(null);
+        }
+      };
     //filter the items using the filter text
     self.filteredItems = ko.computed(function() {
         var filter = self.filter().toLowerCase();
@@ -75,15 +138,53 @@ var ViewModel = function() {
             return ko.utils.arrayFilter(self.places(), function(item) {
                 //return item.title.substring(0, filter.length) == filter;
                 //console.log(item.title + ' ' + filter);
-                return item.title == filter;
+                return item.title.toLowerCase().indexOf(filter) > -1;
             });
         }
     }, self);
     
-
-    // self.filteredItems = self.places().filter(function(item) {
-    // return !self.filter() || item.title == self.filter();
-//});
+    function populateInfoWindow(marker, infowindow) {
+        // Check to make sure the infowindow is not already opened on this marker.
+        if (infowindow.marker != marker) {
+          // Clear the infowindow content to give the streetview time to load.
+          infowindow.setContent('');
+          infowindow.marker = marker;
+          // Make sure the marker property is cleared if the infowindow is closed.
+          infowindow.addListener('closeclick', function() {
+            infowindow.marker = null;
+          });
+          var streetViewService = new google.maps.StreetViewService();
+          var radius = 50;
+          // In case the status is OK, which means the pano was found, compute the
+          // position of the streetview image, then calculate the heading, then get a
+          // panorama from that and set the options
+          function getStreetView(data, status) {
+            if (status == google.maps.StreetViewStatus.OK) {
+              var nearStreetViewLocation = data.location.latLng;
+              var heading = google.maps.geometry.spherical.computeHeading(
+                nearStreetViewLocation, marker.position);
+                infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+                var panoramaOptions = {
+                  position: nearStreetViewLocation,
+                  pov: {
+                    heading: heading,
+                    pitch: 30
+                  }
+                };
+              var panorama = new google.maps.StreetViewPanorama(
+                document.getElementById('pano'), panoramaOptions);
+            } else {
+              infowindow.setContent('<div>' + marker.title + '</div>' +
+                '<div>No Street View Found</div>');
+            }
+          }
+          // Use streetview service to get the closest streetview image within
+          // 50 meters of the markers position
+          streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+          // Open the infowindow on the correct marker.
+          infowindow.open(Model.map, marker);
+        }
+      }
 
 };
 
@@ -97,6 +198,6 @@ var initMap = function() {
       mapTypeControl: false,
       styles: styles
     });
- 
+  
  ko.applyBindings(new ViewModel());
 };
