@@ -1,11 +1,11 @@
 // MODEL
 var Model = {
-//     // Array containing location data   
+ // variable declaration of map
 map: null,
-
+//   Array containing location data  
 locations: [
   {title: 'To Steki', location: {lat: 44.4966635, lng: 11.3475192}},
-  {title: 'Va Mo La', location: {lat: 44.4981947, lng: 11.3453512}},
+  {title: "Va Mo Là", location: {lat: 44.4981947, lng: 11.3453512}},
   {title: 'La bottega di un chicco', location: {lat: 44.4906848, lng: 11.3475381}},
   {title: 'Camera a Sud', location: {lat: 44.4963092, lng: 11.345127}},
   {title: 'Pizzartist Marsala', location: {lat: 44.4967268, lng: 11.3452905}},
@@ -18,33 +18,29 @@ locations: [
 var ViewModel = function() {
     // functions to add markers, show data, filter locations, 
     //update infowindow content etc.
-    // Run API calls to get data 
 
- 
-    const YELP_BASE_URL = "https://api.yelp.com/v2/";
+ // constants to be used with Yelp api
+    const YELP_BASE_URL = "https://api.yelp.com/v2/search";
     const YELP_KEY = "G3gWGS2XU4pO96hRqsYfug";
     const YELP_TOKEN = "rQIuADbleGHxUfckiJbhMHzfM0PUe7bv";
     const YELP_KEY_SECRET = "Hrj_9ufk6CnCYiifWKXmnJS1xpQ";
     const YELP_TOKEN_SECRET = "K-5qKB_mMpk8mEcoAEIG1UotN9M";
+
     var self = this;
+
     self.showMapMessage = ko.observable(false);
-    self.showErrorMessage = ko.observable(false);
     self.places = ko.observableArray();
     self.filter = ko.observable('');
     
-    // if(Model.map == null){
-    //     self.showMapMessage(true);
-    //   } else {
-    //     self.showMapMessage(false);
-    //   }
-    var placesModel = function(item){
-        this.position = item.location;
-        this.title = item.title;
-    };
-   
+    if(Model.map == null){
+        self.showMapMessage(false);
+      } else {
+        self.showMapMessage(true);
+      }
+ 
 
   var largeInfowindow = new google.maps.InfoWindow();
-  //var largeInfowindow = new google.maps.InfoWindow();
+  
 	for (var i = 0; i < Model.locations.length; i++) {
           // Get the position from the location array.
           obj = Model.locations[i];
@@ -56,6 +52,7 @@ var ViewModel = function() {
             map: Model.map
           });
          self.places.push(marker);
+         // add a click listener to show infowindow
          marker.addListener('click', function() {
           populateInfoWindow(this, largeInfowindow);
         });
@@ -65,14 +62,34 @@ var ViewModel = function() {
       self.showInfo = function(value){
           populateInfoWindow(value, largeInfowindow);
         };
+
+        // This function will loop through the markers array and display them all.
+      self.showListings = function () {
+          var bounds = new google.maps.LatLngBounds();
+          // Extend the boundaries of the map for each marker and display the marker
+          for (var i = 0; i < self.filteredItems().length; i++) {
+            self.filteredItems()[i].setMap(Model.map);
+            bounds.extend(self.filteredItems()[i].position);
+          }
+          Model.map.fitBounds(bounds);
+        };
+      
+      
+      // // This function will loop through the listings and hide them all.
+      self.hideListings =  function () {
+          for (var i = 0; i < self.places().length; i++) {
+            self.places()[i].setMap(null);
+          }
+        };
+
       // function to retrieve data from Yelp API
       function nonce_generate() {
         return (Math.floor(Math.random() * 1e12).toString());
       }
       self.yelpdata = function(value){
-          var yelp_url = YELP_BASE_URL + 'search?location=bologna&term=food&cll=' 
-          + value.position.lat + ',' + value.position.lng + '&limit=3';
-
+         // var yelp_url = YELP_BASE_URL + 'search?location=bologna&term=food&cll=' 
+         // + value.position.lat() + '%2C' + value.position.lng() + '&limit=3';
+          var yelp_url = YELP_BASE_URL;
           var parameters = {
             oauth_consumer_key: YELP_KEY,
             oauth_token: YELP_TOKEN,
@@ -80,7 +97,11 @@ var ViewModel = function() {
             oauth_timestamp: Math.floor(Date.now()/1000),
             oauth_signature_method: 'HMAC-SHA1',
             oauth_version : '1.0',
-            callback: 'cb' // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
+            callback: 'cb', // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
+            location : 'Bologna',
+            term : 'food',
+            limit : 3,
+            cll : value.position.lat() + ',' + value.position.lng()
           };
 
           var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, YELP_KEY_SECRET, YELP_TOKEN_SECRET);
@@ -92,14 +113,13 @@ var ViewModel = function() {
             cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
             dataType: 'jsonp',
             success: function(results) {
-              $.each(results, function(index, element) {
-                  $('#suggestions').append('<p><a href="'+ 
-                    element.businesses.url +'">'+element.businesses.name+'</a></p>')
-                  });
+                  $('#suggestions').empty();
+                  $('#suggestions').append('<p><a target="_blank" href="'+ 
+                    results.businesses[0].url +'">'+ results.businesses[0].name +'</a></p>');
                   },
             
             fail: function() {
-              "No other suggestions could be loaded";
+              $('#suggestions').append("No suggestions could be loaded");
             }
           };
 
@@ -111,24 +131,7 @@ var ViewModel = function() {
 
 
 
-    // This function will loop through the markers array and display them all.
-    self.showListings = function () {
-        var bounds = new google.maps.LatLngBounds();
-        // Extend the boundaries of the map for each marker and display the marker
-        for (var i = 0; i < self.filteredItems().length; i++) {
-          self.filteredItems()[i].setMap(Model.map);
-          bounds.extend(self.filteredItems()[i].position);
-        }
-        Model.map.fitBounds(bounds);
-      };
-      
-      
-      // // This function will loop through the listings and hide them all.
-    self.hideListings =  function () {
-        for (var i = 0; i < self.places().length; i++) {
-          self.places()[i].setMap(null);
-        }
-      };
+  
     //filter the items using the filter text
     self.filteredItems = ko.computed(function() {
         var filter = self.filter().toLowerCase();
@@ -163,7 +166,7 @@ var ViewModel = function() {
               var nearStreetViewLocation = data.location.latLng;
               var heading = google.maps.geometry.spherical.computeHeading(
                 nearStreetViewLocation, marker.position);
-                infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+                infowindow.setContent('<div><mark>' + 'Nearby '+ marker.title + '</mark></div><div id="pano"></div>');
                 var panoramaOptions = {
                   position: nearStreetViewLocation,
                   pov: {
@@ -174,7 +177,7 @@ var ViewModel = function() {
               var panorama = new google.maps.StreetViewPanorama(
                 document.getElementById('pano'), panoramaOptions);
             } else {
-              infowindow.setContent('<div>' + marker.title + '</div>' +
+              infowindow.setContent('<div><mark>' + marker.title + '</mark></div>' +
                 '<div>No Street View Found</div>');
             }
           }
@@ -190,8 +193,7 @@ var ViewModel = function() {
 
 //Function to load map and start up app      
 var initMap = function() {
- // Load  Google Map:   map = new google.maps.Map(document.getElementById('map') etc. 
- // Instantiate View Model
+
   Model.map = new google.maps.Map(document.getElementById('map'), {
       center: {lat:44.493781,lng:11.35143},
       zoom: 14,

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
  <head>
-  <meta http-equiv="Content-Type" content="text/html" />
+  <meta http-equiv="Content-Type" content="text/html, charset=UTF-8" />
     <title>Neighborhood Map Application</title>
     
     <link rel="stylesheet" href="dist/css/bootstrap.min.css">
@@ -10,8 +10,8 @@
     <script type="text/javascript" src="js/knockout-3.4.1.js"></script>
     <script type="text/javascript" src="dist/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/oauth-signature.min.js"></script> 
-   
-  <!--  <script type="text/javascript" src="js/mapsapplication.js"></script> -->
+   <script src="bower_components/oauth-signature/dist/oauth-signature.js"></script>
+  
  </head>
  <body>
   <div class="container">
@@ -23,9 +23,10 @@
  
 
         <div class="panel-body" data-bind="foreach: filteredItems">
-          <p data-bind="text: title, click: $parent.showInfo"></p>
+          <p data-bind="text: title, click: function() { $parent.showInfo($data); $parent.yelpdata($data)}"></p>
         </div>
-        <div id="suggestions"></div>
+        <div class="panel-heading">More suggestions (from Yelp)</div>
+        <div class="panel-body" id="suggestions"></div>
       </div>
 </div>
   </div>
