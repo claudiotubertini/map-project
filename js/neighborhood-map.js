@@ -146,6 +146,21 @@ var ViewModel = function() {
         }
     }, self);
     
+    // function populateYelpInfoWindow(marker, infowindow){
+    //   if (infowindow.marker != marker) {
+    //       // Clear the infowindow content to give the streetview time to load.
+    //       infowindow.setContent('');
+    //       infowindow.marker = marker;
+    //       // Make sure the marker property is cleared if the infowindow is closed.
+    //       infowindow.addListener('closeclick', function() {
+    //         infowindow.marker = null;
+    //       });
+    //       infowindow.setContent('<div><mark>' + marker.title + '</mark></div>' +
+    //             '<div>No Street View Found</div><p><a target="_blank" href="'+ 
+    //                 results.businesses[0].url +'">'+ results.businesses[0].name +'</a></p>');
+    //     }
+    // }
+
     function populateInfoWindow(marker, infowindow) {
         // Check to make sure the infowindow is not already opened on this marker.
         if (infowindow.marker != marker) {
