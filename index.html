@@ -25,7 +25,9 @@
           <p data-bind="text: title, click: function() { $parent.showInfo($data); $parent.yelpdata($data)}"></p>
         </div>
         <div class="panel-heading">More suggestions (from Yelp)</div>
-        <div class="panel-body" id="suggestions"></div>
+        <div class="panel-body" id="suggestions" data-bind="foreach: filterYelp">
+          <p><a target="_blank" data-bind="attr: { href: url }"><span data-bind="name"></span> </a></p>
+        </div>
       </div>
 </div>
   </div>
@@ -36,7 +38,7 @@
    <script src = "https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyBZR08CuagYkwAw6KeJBry2pZpiULeYuhM&v=3&callback=initMap"
    async defer>
    </script>
-   <script type="text/javascript" src="dist/js/map.js"></script>
+   <script type="text/javascript" src="js/map.js"></script>
    <script type="text/javascript" src="js/neighborhood-map.js"></script>
  </body>
 </html>

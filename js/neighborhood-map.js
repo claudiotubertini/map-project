@@ -30,6 +30,7 @@ var ViewModel = function() {
 
     self.showMapMessage = ko.observable(false);
     self.places = ko.observableArray();
+    self.filterYelp = ko.observableArray();
     self.filter = ko.observable('');
     
     if(Model.map == null){
@@ -100,7 +101,7 @@ var ViewModel = function() {
             callback: 'cb', // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
             location : 'Bologna',
             term : 'food',
-            limit : 3,
+            //limit : 3,
             cll : value.position.lat() + ',' + value.position.lng()
           };
 
@@ -113,9 +114,13 @@ var ViewModel = function() {
             cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
             dataType: 'jsonp',
             success: function(results) {
-                  $('#suggestions').empty();
-                  $('#suggestions').append('<p><a target="_blank" href="'+ 
-                    results.businesses[0].url +'">'+ results.businesses[0].name +'</a></p>');
+              for (var i = 0; i < results.businesses.length; i++) {
+              self.filterYelp.push(results.businesses[i]);
+              console.log(self.filterYelp[i]);
+            }
+                  // $('#suggestions').empty();
+                  // $('#suggestions').append('<p><a target="_blank" href="'+ 
+                  //   results.businesses[0].url +'">'+ results.businesses[0].name +'</a></p>');
                   },
             
             fail: function() {
