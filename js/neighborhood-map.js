@@ -227,6 +227,11 @@ var initMap = function() {
       mapTypeControl: false,
       styles: styles
     });
-  
+  // listen for the window resize event & trigger Google Maps to update too
+  $(window).resize(function() {
+    google.maps.event.trigger(Model.map, "resize");
+  });
+
+
  ko.applyBindings(new ViewModel());
 };
