@@ -124,7 +124,7 @@ var ViewModel = function() {
         return (Math.floor(Math.random() * 1e12).toString());
       }
       function random_cll(){
-        return return (Math.random() - 0.5) * 2/100;
+        return (Math.random() - 0.5) * 2/100;
       }
       self.yelpdata = function(value){
          // var yelp_url = YELP_BASE_URL + 'search?location=bologna&term=food&cll=' 

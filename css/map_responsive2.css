@@ -1,7 +1,7 @@
 
- html,
-      body {
+ html, body {
         font-family: Arial, sans-serif;
+        min-height: 100% !important;
         height: 100%;
         margin: 0;
         padding: 0;
@@ -11,7 +11,9 @@
         height: 100%;
         /*position: relative;*/
       }
-
+.row {
+  height: 100%;
+}
       input {
         font-size: 12px;
       }
@@ -47,8 +49,9 @@
         left: 342px;
         position: absolute;
         right: 0px;*/
+        
         height: 100%;
-        min-height: 350px;
+        
       }
 
 
@@ -62,22 +65,10 @@
         text-align: left;
        /* width: 240px;*/
       }
-#floating-panel {
-        /*position: absolute;*/
-        top: 10px;
-        left: 25%;
-        z-index: 5;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #999;
-        text-align: center;
-        font-family: 'Roboto','sans-serif';
-        line-height: 30px;
-        padding-left: 10px;
-      }
+
       #pano {
-        width: 200px;
-        height: 200px;
+        width: 150px;
+        height: 150px;
       }
 
       .text {
