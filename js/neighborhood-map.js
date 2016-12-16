@@ -14,7 +14,7 @@ locations: [
 ]
  };
 
-//VIEW MODEL
+//VIEW MODEL 44.4939947,11.353191299999935
 var ViewModel = function() {
     // functions to add markers, show data, filter locations, 
     //update infowindow content etc.
@@ -41,29 +41,65 @@ var ViewModel = function() {
  
 
   var largeInfowindow = new google.maps.InfoWindow();
+   // This function takes in a COLOR, and then creates a new marker
+      // icon of that color. The icon will be 21 px wide by 34 high, have an origin
+      // of 0, 0 and be anchored at 10, 34).
+      function makeMarkerIcon(markerColor) {
+        var markerImage = new google.maps.MarkerImage(
+          'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
+          '|40|_|%E2%80%A2',
+          new google.maps.Size(21, 34),
+          new google.maps.Point(0, 0),
+          new google.maps.Point(10, 34),
+          new google.maps.Size(21,34));
+        return markerImage;
+      }
   
 	for (var i = 0; i < Model.locations.length; i++) {
           // Get the position from the location array.
           obj = Model.locations[i];
+          var defaultIcon = makeMarkerIcon('e85113');
          // // Create a marker per location, and put into markers array.
           var marker = new google.maps.Marker({
             position: obj.location,
             title: obj.title,
             animation: google.maps.Animation.DROP,
+            icon: defaultIcon,
             map: Model.map
           });
+          
+
+        // Create a "highlighted location" marker color for when the user
+        // mouses over the marker.
+        var highlightedIcon = makeMarkerIcon('f0e4d3');
          self.places.push(marker);
          // add a click listener to show infowindow
          marker.addListener('click', function() {
           populateInfoWindow(this, largeInfowindow);
         });
+         marker.addListener('mouseover', function() {
+            this.setIcon(highlightedIcon);
+          });
+          marker.addListener('mouseout', function() {
+            this.setIcon(defaultIcon);
+          });
           }
      
       // function to show marker when mouseover the form
       self.showInfo = function(value){
           populateInfoWindow(value, largeInfowindow);
+          //value.setIcon
         };
-
+        var yelpedIcon = makeMarkerIcon('ff0000');
+        self.showYelpMarker = function(value){
+          var yelpmarker = new google.maps.Marker({
+            position: value.location.coordinate,
+            title: value.name,
+            animation: google.maps.Animation.DROP,
+            icon: yelpedIcon,
+            map: Model.map
+          });
+        }
         // This function will loop through the markers array and display them all.
       self.showListings = function () {
           var bounds = new google.maps.LatLngBounds();
@@ -87,6 +123,9 @@ var ViewModel = function() {
       function nonce_generate() {
         return (Math.floor(Math.random() * 1e12).toString());
       }
+      function random_cll(){
+        return return (Math.random() - 0.5) * 2/100;
+      }
       self.yelpdata = function(value){
          // var yelp_url = YELP_BASE_URL + 'search?location=bologna&term=food&cll=' 
          // + value.position.lat() + '%2C' + value.position.lng() + '&limit=3';
@@ -100,8 +139,8 @@ var ViewModel = function() {
             oauth_version : '1.0',
             callback: 'cb', // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
             location : 'Bologna',
-            term : 'food',
-            //limit : 3,
+            term : 'restaurant',
+            limit : 3,
             cll : value.position.lat() + ',' + value.position.lng()
           };
 
@@ -118,16 +157,9 @@ var ViewModel = function() {
                 self.filterYelp.removeAll();
               }
               self.filterYelp.push(results.businesses);
-            //   for (var i = 0; i < results.businesses.length; i++) {
-            //   self.filterYelp.push(results.businesses[i]);
-            // }
-            console.log(results);
-            //var a = self.filterYelp();
-            //console.log(self.filterYelp().length);
+            
             console.log(self.filterYelp());
-                  // $('#suggestions').empty();
-                  // $('#suggestions').append('<p><a target="_blank" href="'+ 
-                  //   results.businesses[0].url +'">'+ results.businesses[0].name +'</a></p>');
+                  
                   },
             
             fail: function() {
@@ -172,6 +204,15 @@ var ViewModel = function() {
     //                 results.businesses[0].url +'">'+ results.businesses[0].name +'</a></p>');
     //     }
     // }
+//   ************************************
+// var pinImage = new google.maps.MarkerImage("http://www.googlemapsmarkers.com/v1/009900/");
+
+//  var sugg_marker = new google.maps.Marker({
+//             position: yourlatlong,
+//             icon: pinImage,
+//             map: map
+//         });
+// **********************************
 
     function populateInfoWindow(marker, infowindow) {
         // Check to make sure the infowindow is not already opened on this marker.
