@@ -91,14 +91,20 @@ var ViewModel = function() {
           //value.setIcon
         };
         var yelpedIcon = makeMarkerIcon('ff0000');
+        function getposition(coord){
+          return {lat: coord.latitude, lng: coord.longitude};
+        }
+
         self.showYelpMarker = function(value){
           var yelpmarker = new google.maps.Marker({
-            position: value.location.coordinate,
+            position: getposition(value.location.coordinate),
             title: value.name,
             animation: google.maps.Animation.DROP,
             icon: yelpedIcon,
             map: Model.map
           });
+          var bounds = new google.maps.LatLngBounds();
+          bounds.extend(this.yelpmarker.position);
         }
         // This function will loop through the markers array and display them all.
       self.showListings = function () {

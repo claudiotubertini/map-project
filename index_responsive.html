@@ -32,7 +32,7 @@
           <div class="panel-heading">More suggestions (from Yelp)</div>
             <div class="panel-body" id="suggestions" data-bind="foreach: filterYelp()[0]">
           
-            <p><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span><a target="_blank" data-bind="attr: { href: url }"><span data-bind="text: name"></span> </a><button class="btn btn-default btn-sm">Show on the map</button></p>
+            <p><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span><a target="_blank" data-bind="attr: { href: url }"><span data-bind="text: name"></span> </a><button class="btn btn-default btn-sm" data-bind="click: $parent.showYelpMarker" >Show on the map</button></p>
             
             </div>
         </div>
