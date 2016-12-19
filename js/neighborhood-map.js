@@ -32,6 +32,7 @@ var ViewModel = function() {
     self.places = ko.observableArray();
     self.filterYelp = ko.observableArray();
     self.filter = ko.observable('');
+    self.yelpMarker = ko.observableArray();
     
     if(Model.map == null){
         self.showMapMessage(false);
@@ -41,6 +42,7 @@ var ViewModel = function() {
  
 
   var largeInfowindow = new google.maps.InfoWindow();
+  var bounds = new google.maps.LatLngBounds();
    // This function takes in a COLOR, and then creates a new marker
       // icon of that color. The icon will be 21 px wide by 34 high, have an origin
       // of 0, 0 and be anchored at 10, 34).
@@ -90,22 +92,42 @@ var ViewModel = function() {
           populateInfoWindow(value, largeInfowindow);
           //value.setIcon
         };
+        // shows results from Yelp Ajax 
         var yelpedIcon = makeMarkerIcon('ff0000');
+        //helper function to pass yelp position to google api position
         function getposition(coord){
           return {lat: coord.latitude, lng: coord.longitude};
         }
-
+// remove from the map the marker from Yelp
+        self.removeYelpMarker = function(){
+          //console.log(value.name);
+          //self.yelpMarker()[this].setMap(null);
+            $.each(self.yelpMarker(), function( index, value ) {
+              
+                if ( self.yelpMarker()[index].title == this.title){
+                    self.yelpMarker()[index].setVisible(false);
+                }
+              });
+        }
         self.showYelpMarker = function(value){
-          var yelpmarker = new google.maps.Marker({
+          var yelpmark = new google.maps.Marker({
             position: getposition(value.location.coordinate),
             title: value.name,
             animation: google.maps.Animation.DROP,
             icon: yelpedIcon,
             map: Model.map
           });
-          var bounds = new google.maps.LatLngBounds();
-          bounds.extend(this.yelpmarker.position);
-        }
+
+          self.yelpMarker.push(yelpmark);
+          //  for (var i = 0; i < self.yelpMarker().length; i++) {
+          //   self.yelpMarker()[i].setMap(Model.map);
+          //   bounds.extend(self.yelpMarker()[i].position);
+          //   console.log(self.yelpMarker());
+          // }
+          yelpmark.setMap(Model.map);
+          bounds.extend(yelpmark.position);
+          Model.map.panToBounds(bounds);
+        };
         // This function will loop through the markers array and display them all.
       self.showListings = function () {
           var bounds = new google.maps.LatLngBounds();
@@ -163,9 +185,6 @@ var ViewModel = function() {
                 self.filterYelp.removeAll();
               }
               self.filterYelp.push(results.businesses);
-            
-            console.log(self.filterYelp());
-                  
                   },
             
             fail: function() {
