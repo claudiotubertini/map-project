@@ -99,16 +99,27 @@ var ViewModel = function() {
           return {lat: coord.latitude, lng: coord.longitude};
         }
 // remove from the map the marker from Yelp
-        self.removeYelpMarker = function(){
-          //console.log(value.name);
-          //self.yelpMarker()[this].setMap(null);
-            $.each(self.yelpMarker(), function( index, value ) {
-              
-                if ( self.yelpMarker()[index].title == this.title){
-                    self.yelpMarker()[index].setVisible(false);
-                }
-              });
-        }
+         
+//         function(location){ 
+//     console.log(location.name)
+//     location.setVisible(false)
+
+// };
+self.removeYelpMarker = function(location) {
+    for (var i = 0; i < self.yelpMarker().length; i++) {
+        if (self.yelpMarker()[i].title === location.name)
+            return self.yelpMarker()[i].setVisible(false); // Return as soon as the object is found
+    }
+    return null; // The object was not found
+};
+        // function(){
+        //     $.each(self.yelpMarker(), function( index, value ) {
+        //       if ( self.yelpMarker()[index].title == this.title){
+        //             self.yelpMarker()[index].setVisible(false);
+        //         }
+        //       });
+        // }
+
         self.showYelpMarker = function(value){
           var yelpmark = new google.maps.Marker({
             position: getposition(value.location.coordinate),
@@ -117,13 +128,7 @@ var ViewModel = function() {
             icon: yelpedIcon,
             map: Model.map
           });
-
           self.yelpMarker.push(yelpmark);
-          //  for (var i = 0; i < self.yelpMarker().length; i++) {
-          //   self.yelpMarker()[i].setMap(Model.map);
-          //   bounds.extend(self.yelpMarker()[i].position);
-          //   console.log(self.yelpMarker());
-          // }
           yelpmark.setMap(Model.map);
           bounds.extend(yelpmark.position);
           Model.map.panToBounds(bounds);
