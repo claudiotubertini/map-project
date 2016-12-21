@@ -1,3 +1,4 @@
+// Google map features style
 var styles = [
           {
             featureType: 'water',
