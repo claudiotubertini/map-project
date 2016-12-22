@@ -31,6 +31,7 @@ var ViewModel = function() {
     self.filterYelp = ko.observableArray();
     self.filter = ko.observable('');
     self.yelpMarker = ko.observableArray();
+    self.showSuggestions = ko.observable(false);
 
     if(Model.map == null){
         self.showMapMessage(false);
@@ -145,8 +146,11 @@ var ViewModel = function() {
     // and populate an observableArray: filterYelp
     self.yelpdata = function(value){
         // add a random number to position to avoid repeating the same suggestion
-        var lat = value.position.lat() + random_cll(-0.9, 0.9);
-        var lng = value.position.lng() + random_cll(-0.9, 0.9);
+ //       var lat = value.position.lat() + random_cll(-0.9, 0.9);
+ //       var lng = value.position.lng() + random_cll(-0.9, 0.9);
+        var name = value.title.split(' ')[0];
+        var lat = value.position.lat();
+        var lng = value.position.lng();
         var yelp_url = YELP_BASE_URL;
         var parameters = {
           oauth_consumer_key: YELP_KEY,
@@ -156,9 +160,12 @@ var ViewModel = function() {
           oauth_signature_method: 'HMAC-SHA1',
           oauth_version : '1.0',
           callback: 'cb', // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
-          location : 'bologna',
-          term : '',
+          location : 'Bologna',
+          term : name,
+          radius_filter: 10000,
+          sort: 1,
           limit : 3,
+          category_filter: 'food',
           cll : lat + ',' + lng
         };
 
@@ -175,9 +182,14 @@ var ViewModel = function() {
             self.filterYelp.removeAll();
           }
           self.filterYelp.push(results.businesses);
-              },
+          if (results.businesses.length == 0){
+              self.showSuggestions(true);
+            }
+          else {self.showSuggestions(false);}
+          },
 
         fail: function() {
+          self.showSuggestions(false);
           $('#suggestions').append("No suggestions could be loaded");
         }
       };
@@ -231,7 +243,7 @@ var ViewModel = function() {
           infowindow.marker = null;
         });
         var streetViewService = new google.maps.StreetViewService();
-        var radius = 50;
+        var radius = 20;
         // In case the status is OK, which means the pano was found, compute the
         // position of the streetview image, then calculate the heading, then get a
         // panorama from that and set the options
