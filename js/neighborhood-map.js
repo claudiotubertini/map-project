@@ -11,10 +11,12 @@ var Model = {
       {title: 'Pizzartist Marsala', location: {lat: 44.4967268, lng: 11.3452905}},
       {title: 'Pizzeria Aldrovandi', location: {lat: 44.4938545, lng: 11.3495862}},
       {title: 'Pane e Panelle', location: {lat: 44.4939947, lng: 11.3531913}}
+      // {title: 'Osteria Francescana', location: {lat: 44.6448314,lng: 10.919385}},
+      // {title: 'San Domenico', location: {lat: 44.3556338, lng: 11.7102713}}
     ]
 };
 
-//VIEW MODEL
+//VIEW MODEL 
 var ViewModel = function() {
 
     // constants to be used with Yelp api
@@ -64,6 +66,8 @@ var ViewModel = function() {
         var highlightedIcon = makeMarkerIcon('f0e4d3');
         // Add the marker to an observableArray
         self.places.push(marker);
+        bounds.extend(marker.position);
+        Model.map.fitBounds(bounds);
         // add a click listener to show infowindow
         marker.addListener('click', function() {
             populateInfoWindow(this, largeInfowindow);
@@ -125,7 +129,7 @@ var ViewModel = function() {
                 self.yelpMarker()[i].setVisible(false);
         }
     };
-    var yelpedIcon = makeMarkerIcon('ff0000');
+    var yelpedIcon = makeMarkerIcon('ff9900');
 
     // show on the map a yelp marker and add it to an observableArray: yelpMarker
     self.showYelpMarker = function(value){
@@ -160,9 +164,9 @@ var ViewModel = function() {
           oauth_signature_method: 'HMAC-SHA1',
           oauth_version : '1.0',
           callback: 'cb', // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
-          location : 'Bologna',
+          location : 'bologna',
           term : name,
-          radius_filter: 10000,
+          radius_filter: 1000,
           sort: 1,
           limit : 3,
           category_filter: 'food',
@@ -206,15 +210,6 @@ var ViewModel = function() {
     */
     function nonce_generate() {
         return (Math.floor(Math.random() * 1e12).toString());
-    }
-
-    /**
-    * @description Generate a random signed number between min and max to be used
-    * to add a kind of 'jitter' in Yelp position
-    * @returns {number}
-    */
-    function random_cll(min, max){
-        return Math.random() * (max - min) + min;
     }
 
     /**
@@ -300,7 +295,7 @@ var initMap = function() {
 
     Model.map = new google.maps.Map(document.getElementById('map'), {
         center: {lat:44.493781,lng:11.35143},
-        zoom: 14,
+        zoom: 10,
         mapTypeControl: false,
         styles: styles
       });
