@@ -5,14 +5,12 @@ var Model = {
     //   Array containing sample location data
     locations: [
       {title: 'To Steki', location: {lat: 44.4966635, lng: 11.3475192}},
-      {title: "Va Mo Là", location: {lat: 44.4981947, lng: 11.3453512}},
+      {title: "Va Mo La", location: {lat: 44.4981947, lng: 11.3453512}},
       {title: 'La bottega di un chicco', location: {lat: 44.4906848, lng: 11.3475381}},
       {title: 'Camera a Sud', location: {lat: 44.4963092, lng: 11.345127}},
-      {title: 'Pizzartist Marsala', location: {lat: 44.4967268, lng: 11.3452905}},
+      {title: 'Pizz Artist', location: {lat: 44.4967268, lng: 11.3452905}},
       {title: 'Pizzeria Aldrovandi', location: {lat: 44.4938545, lng: 11.3495862}},
       {title: 'Pane e Panelle', location: {lat: 44.4939947, lng: 11.3531913}}
-      // {title: 'Osteria Francescana', location: {lat: 44.6448314,lng: 10.919385}},
-      // {title: 'San Domenico', location: {lat: 44.3556338, lng: 11.7102713}}
     ]
 };
 
@@ -20,17 +18,17 @@ var Model = {
 var ViewModel = function() {
 
     // constants to be used with Yelp api
-    const YELP_BASE_URL = "https://api.yelp.com/v2/search";
+    const YELP_BASE_URL = "https://api.yelp.com/v2/business/";
     const YELP_KEY = "G3gWGS2XU4pO96hRqsYfug";
-    const YELP_TOKEN = "rQIuADbleGHxUfckiJbhMHzfM0PUe7bv";
+    const YELP_TOKEN = "5DzTH0aqeQZHcW_djvgmNjuNNjojF5wQ";
     const YELP_KEY_SECRET = "Hrj_9ufk6CnCYiifWKXmnJS1xpQ";
-    const YELP_TOKEN_SECRET = "K-5qKB_mMpk8mEcoAEIG1UotN9M";
+    const YELP_TOKEN_SECRET = "8mn4yqEPFwBxBsXepmge3X3tA6A";
 
     var self = this;
 
     self.showMapMessage = ko.observable(false);
     self.places = ko.observableArray();
-    self.filterYelp = ko.observableArray();
+    self.filterYelp = ko.observable();
     self.filter = ko.observable('');
     self.yelpMarker = ko.observableArray();
     self.showSuggestions = ko.observable(false);
@@ -149,13 +147,9 @@ var ViewModel = function() {
     // retrieve yelp data using latitude and longitude of the area
     // and populate an observableArray: filterYelp
     self.yelpdata = function(value){
-        // add a random number to position to avoid repeating the same suggestion
- //       var lat = value.position.lat() + random_cll(-0.9, 0.9);
- //       var lng = value.position.lng() + random_cll(-0.9, 0.9);
-        var name = value.title.split(' ')[0];
-        var lat = value.position.lat();
-        var lng = value.position.lng();
-        var yelp_url = YELP_BASE_URL;
+        var business_id0 = value.title.toLowerCase().split(' ').join('-');
+        business_id = business_id0 + '-bologna';
+        var yelp_url = YELP_BASE_URL + business_id;
         var parameters = {
           oauth_consumer_key: YELP_KEY,
           oauth_token: YELP_TOKEN,
@@ -163,14 +157,8 @@ var ViewModel = function() {
           oauth_timestamp: Math.floor(Date.now()/1000),
           oauth_signature_method: 'HMAC-SHA1',
           oauth_version : '1.0',
-          callback: 'cb', // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
-          location : 'bologna',
-          term : name,
-          radius_filter: 1000,
-          sort: 1,
-          limit : 3,
-          category_filter: 'food',
-          cll : lat + ',' + lng
+          callback: 'cb',
+          cc: 'it'
         };
 
       var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, YELP_KEY_SECRET, YELP_TOKEN_SECRET);
@@ -185,8 +173,8 @@ var ViewModel = function() {
           if (self.filterYelp().length > 0){
             self.filterYelp.removeAll();
           }
-          self.filterYelp.push(results.businesses);
-          if (results.businesses.length == 0){
+          self.filterYelp.push(results);
+          if (results.error !== null){
               self.showSuggestions(true);
             }
           else {self.showSuggestions(false);}
@@ -194,7 +182,7 @@ var ViewModel = function() {
 
         fail: function() {
           self.showSuggestions(false);
-          $('#suggestions').append("No suggestions could be loaded");
+          $('#suggestions').append("No more information could be loaded. Try later");
         }
       };
       // Send AJAX query via jQuery library.
