@@ -170,10 +170,10 @@ var ViewModel = function() {
         cache: true,
         dataType: 'jsonp',
         success: function(results) {
-          if (self.filterYelp().length > 0){
-            self.filterYelp.removeAll();
+          if (self.filterYelp() !== ''){
+            self.filterYelp('');
           }
-          self.filterYelp.push(results);
+          self.filterYelp = results;
           if (results.error !== null){
               self.showSuggestions(true);
             }
