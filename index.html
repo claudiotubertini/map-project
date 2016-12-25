@@ -33,7 +33,7 @@
 
 
             <div class="panel-body" id="suggestions">
-              <p><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span><a target="_blank" data-bind="attr: { href: filterYelp().url }"><span data-bind="text: filterYelp().name"></span> </a><br />
+              <p><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span><a target="_blank" data-bind="attr: { href: filterYelp.url }"><span data-bind="text: filterYelp.name"></span> </a><br />
               <button class="btn btn-default btn-sm" data-bind="click: $parent.showYelpMarker" >Show on the map</button><button class="btn btn-default btn-sm" data-bind="click: function() $parent.removeYelpMarker($data)">Remove</button></p>
             </div>
 
