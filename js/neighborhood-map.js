@@ -7,7 +7,7 @@ var Model = {
       {title: 'To Steki', location: {lat: 44.4966635, lng: 11.3475192}},
       {title: "Va Mo La", location: {lat: 44.4981947, lng: 11.3453512}},
       {title: 'La bottega di un chicco', location: {lat: 44.4906848, lng: 11.3475381}},
-      {title: 'Camera a Sud', location: {lat: 44.4963092, lng: 11.345127}},
+      {title: 'Camera Sud', location: {lat: 44.4963092, lng: 11.345127}},
       {title: 'Pizz Artist', location: {lat: 44.4967268, lng: 11.3452905}},
       {title: 'Pizzeria Aldrovandi', location: {lat: 44.4938545, lng: 11.3495862}},
       {title: 'Pane e Panelle', location: {lat: 44.4939947, lng: 11.3531913}}
@@ -31,10 +31,12 @@ var ViewModel = function() {
     //self.filterYelp = ko.observable();
     self.url = ko.observable();
     self.name = ko.observable();
-    self.error = ko.observable();
+    //self.error = ko.observable();
+    self.reviews = ko.observable();
     self.filter = ko.observable('');
     self.yelpMarker = ko.observableArray();
     self.showSuggestions = ko.observable(false);
+    self.showError = ko.observable(false);
 
     if(Model.map == null){
         self.showMapMessage(false);
@@ -123,33 +125,38 @@ var ViewModel = function() {
     // shows results from Yelp API using Ajax
 
 
-    // remove a yelp suggestion from the listing
-    self.removeYelpMarker = function(location) {
-        for (var i = 0; i < self.yelpMarker().length; i++) {
-            if (self.yelpMarker()[i].title === location.name)
-                self.yelpMarker()[i].setVisible(false);
-        }
-    };
-    var yelpedIcon = makeMarkerIcon('ff9900');
+    // // remove a yelp suggestion from the listing
+    // self.removeYelpMarker = function(location) {
+    //     for (var i = 0; i < self.yelpMarker().length; i++) {
+    //         if (self.yelpMarker()[i].title === location.name)
+    //             self.yelpMarker()[i].setVisible(false);
+    //     }
+    // };
+    // var yelpedIcon = makeMarkerIcon('ff9900');
 
-    // show on the map a yelp marker and add it to an observableArray: yelpMarker
-    self.showYelpMarker = function(value){
-      var yelpmark = new google.maps.Marker({
-          position: getposition(value.location.coordinate),
-          title: value.name,
-          animation: google.maps.Animation.DROP,
-          icon: yelpedIcon,
-          map: Model.map
-        });
-      self.yelpMarker.push(yelpmark);
-      yelpmark.setMap(Model.map);
-      bounds.extend(yelpmark.position);
-      Model.map.panToBounds(bounds);
-    };
+    // // show on the map a yelp marker and add it to an observableArray: yelpMarker
+    // self.showYelpMarker = function(value){
+    //   var yelpmark = new google.maps.Marker({
+    //       position: getposition(value.location.coordinate),
+    //       title: value.name,
+    //       animation: google.maps.Animation.DROP,
+    //       icon: yelpedIcon,
+    //       map: Model.map
+    //     });
+    //   self.yelpMarker.push(yelpmark);
+    //   yelpmark.setMap(Model.map);
+    //   bounds.extend(yelpmark.position);
+    //   Model.map.panToBounds(bounds);
+    // };
 
     // retrieve yelp data using latitude and longitude of the area
     // and populate an observableArray: filterYelp
     self.yelpdata = function(value){
+        self.name('');
+        self.url('');
+        self.reviews('');
+        self.showError(false);
+        self.showSuggestions(false);
         var business_id0 = value.title.toLowerCase().split(' ').join('-');
         business_id = business_id0 + '-bologna';
         var yelp_url = YELP_BASE_URL + business_id;
@@ -176,15 +183,14 @@ var ViewModel = function() {
           self.showSuggestions(true);
           self.name(results.name);
           self.url(results.url);
-          self.error(results.error);
-          console.log(self.name(), self.url(), self.error());
+          //self.error(results.error);
+          self.reviews(results.reviews[0]['excerpt']);
           },
-        fail: function(xhr, ajaxOptions, thrownError) {
+        error: function(xhr, ajaxOptions, thrownError) {
           if(xhr.status==400) {
               self.showSuggestions(false);
           } else {
-              self.showSuggestions(false);
-              $('#suggestions').append("No more information could be loaded. Try later");
+              self.showError(true);
           }
         }
         // fail: function(){
@@ -233,7 +239,7 @@ var ViewModel = function() {
           infowindow.marker = null;
         });
         var streetViewService = new google.maps.StreetViewService();
-        var radius = 20;
+        var radius = 40;
         // In case the status is OK, which means the pano was found, compute the
         // position of the streetview image, then calculate the heading, then get a
         // panorama from that and set the options

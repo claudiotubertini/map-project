@@ -28,15 +28,24 @@
             <div class="panel-body" data-bind="foreach: filteredItems">
               <p data-bind="text: title, click: function(){$parent.showInfo($data); $parent.yelpdata($data)}"></p>
             </div>
-          <div class="panel-heading">More information (from <a href="https://www.yelp.com/">Yelp</a>)
+          <div class="panel-heading" data-bind="visible: !showSuggestions()">
+              <p>Click on the name of the restaurant for more information (from <a href="https://www.yelp.com/">Yelp</a>)</p>
+             
           </div>
 
 
             <div class="panel-body" id="suggestions" data-bind="visible: showSuggestions">
-              <p><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span><a target="_blank" data-bind="attr: { href: url }"><span data-bind="text: name"></span> </a><br />
-              <button class="btn btn-default btn-sm" data-bind="click: showYelpMarker" >Show on the map</button><button class="btn btn-default btn-sm" data-bind="click: function() removeYelpMarker($data)">Remove</button></p>
+              <p><span class="glyphicon glyphicon-new-window" aria-hidden="true" data-bind="visible: showSuggestions"></span><a target="_blank" data-bind="attr: { href: url }"><span data-bind="text: name"></span> </a></p>
+              <p data-bind="text: reviews"></p>
             </div>
-
+            
+              <div id="nosuggestions" class="alert alert-danger panel-body" role="alert" data-bind="visible: showError">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                    No information is available for this place
+              </div>
+            
+            
 
         </div>
       </div>
