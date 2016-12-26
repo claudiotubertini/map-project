@@ -28,7 +28,10 @@ var ViewModel = function() {
 
     self.showMapMessage = ko.observable(false);
     self.places = ko.observableArray();
-    self.filterYelp = ko.observable();
+    //self.filterYelp = ko.observable();
+    self.url = ko.observable();
+    self.name = ko.observable();
+    self.error = ko.observable();
     self.filter = ko.observable('');
     self.yelpMarker = ko.observableArray();
     self.showSuggestions = ko.observable(false);
@@ -170,20 +173,24 @@ var ViewModel = function() {
         cache: true,
         dataType: 'jsonp',
         success: function(results) {
-          if (self.filterYelp() !== ''){
-            self.filterYelp('');
-          }
-          self.filterYelp = results;
-          if (results.error !== null){
-              self.showSuggestions(true);
-            }
-          else {self.showSuggestions(false);}
+          self.showSuggestions(true);
+          self.name(results.name);
+          self.url(results.url);
+          self.error(results.error);
+          console.log(self.name(), self.url(), self.error());
           },
-
-        fail: function() {
-          self.showSuggestions(false);
-          $('#suggestions').append("No more information could be loaded. Try later");
+        fail: function(xhr, ajaxOptions, thrownError) {
+          if(xhr.status==400) {
+              self.showSuggestions(false);
+          } else {
+              self.showSuggestions(false);
+              $('#suggestions').append("No more information could be loaded. Try later");
+          }
         }
+        // fail: function(){
+        //     self.showSuggestions(false);
+        //     $('#suggestions').append("No more information could be loaded. Try later");
+        // }
       };
       // Send AJAX query via jQuery library.
       $.ajax(settings);

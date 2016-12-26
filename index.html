@@ -29,12 +29,12 @@
               <p data-bind="text: title, click: function(){$parent.showInfo($data); $parent.yelpdata($data)}"></p>
             </div>
           <div class="panel-heading">More information (from <a href="https://www.yelp.com/">Yelp</a>)
-          <p class="panel-body" data-bind="visible: showSuggestions">No information available</p></div>
+          </div>
 
 
-            <div class="panel-body" id="suggestions">
-              <p><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span><a target="_blank" data-bind="attr: { href: filterYelp.url }"><span data-bind="text: filterYelp.name"></span> </a><br />
-              <button class="btn btn-default btn-sm" data-bind="click: $parent.showYelpMarker" >Show on the map</button><button class="btn btn-default btn-sm" data-bind="click: function() $parent.removeYelpMarker($data)">Remove</button></p>
+            <div class="panel-body" id="suggestions" data-bind="visible: showSuggestions">
+              <p><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span><a target="_blank" data-bind="attr: { href: url }"><span data-bind="text: name"></span> </a><br />
+              <button class="btn btn-default btn-sm" data-bind="click: showYelpMarker" >Show on the map</button><button class="btn btn-default btn-sm" data-bind="click: function() removeYelpMarker($data)">Remove</button></p>
             </div>
 
 
