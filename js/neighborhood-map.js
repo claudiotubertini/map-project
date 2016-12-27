@@ -1,13 +1,12 @@
 // MODEL
 var Model = {
-     // variable declaration of map
     map: null,
     //   Array containing sample location data
     locations: [
       {title: 'To Steki', location: {lat: 44.4966635, lng: 11.3475192}},
       {title: "Va Mo La", location: {lat: 44.4981947, lng: 11.3453512}},
       {title: 'La bottega di un chicco', location: {lat: 44.4906848, lng: 11.3475381}},
-      {title: 'Camera Sud', location: {lat: 44.4963092, lng: 11.345127}},
+      {title: 'Camera a Sud', location: {lat: 44.4963092, lng: 11.345127}},
       {title: 'Pizz Artist', location: {lat: 44.4967268, lng: 11.3452905}},
       {title: 'Pizzeria Aldrovandi', location: {lat: 44.4938545, lng: 11.3495862}},
       {title: 'Pane e Panelle', location: {lat: 44.4939947, lng: 11.3531913}}
@@ -28,10 +27,8 @@ var ViewModel = function() {
 
     self.showMapMessage = ko.observable(false);
     self.places = ko.observableArray();
-    //self.filterYelp = ko.observable();
     self.url = ko.observable();
     self.name = ko.observable();
-    //self.error = ko.observable();
     self.reviews = ko.observable();
     self.filter = ko.observable('');
     self.yelpMarker = ko.observableArray();
@@ -124,39 +121,16 @@ var ViewModel = function() {
     // ================================
     // shows results from Yelp API using Ajax
 
-
-    // // remove a yelp suggestion from the listing
-    // self.removeYelpMarker = function(location) {
-    //     for (var i = 0; i < self.yelpMarker().length; i++) {
-    //         if (self.yelpMarker()[i].title === location.name)
-    //             self.yelpMarker()[i].setVisible(false);
-    //     }
-    // };
-    // var yelpedIcon = makeMarkerIcon('ff9900');
-
-    // // show on the map a yelp marker and add it to an observableArray: yelpMarker
-    // self.showYelpMarker = function(value){
-    //   var yelpmark = new google.maps.Marker({
-    //       position: getposition(value.location.coordinate),
-    //       title: value.name,
-    //       animation: google.maps.Animation.DROP,
-    //       icon: yelpedIcon,
-    //       map: Model.map
-    //     });
-    //   self.yelpMarker.push(yelpmark);
-    //   yelpmark.setMap(Model.map);
-    //   bounds.extend(yelpmark.position);
-    //   Model.map.panToBounds(bounds);
-    // };
-
-    // retrieve yelp data using latitude and longitude of the area
-    // and populate an observableArray: filterYelp
+    // retrieve yelp data using the name of the business
+    // and assign them to observables
     self.yelpdata = function(value){
+      // all observables are cleaned
         self.name('');
         self.url('');
         self.reviews('');
         self.showError(false);
         self.showSuggestions(false);
+      // preparing the url
         var business_id0 = value.title.toLowerCase().split(' ').join('-');
         business_id = business_id0 + '-bologna';
         var yelp_url = YELP_BASE_URL + business_id;
@@ -183,7 +157,6 @@ var ViewModel = function() {
           self.showSuggestions(true);
           self.name(results.name);
           self.url(results.url);
-          //self.error(results.error);
           self.reviews(results.reviews[0]['excerpt']);
           },
         error: function(xhr, ajaxOptions, thrownError) {
@@ -193,10 +166,6 @@ var ViewModel = function() {
               self.showError(true);
           }
         }
-        // fail: function(){
-        //     self.showSuggestions(false);
-        //     $('#suggestions').append("No more information could be loaded. Try later");
-        // }
       };
       // Send AJAX query via jQuery library.
       $.ajax(settings);
@@ -211,15 +180,6 @@ var ViewModel = function() {
     */
     function nonce_generate() {
         return (Math.floor(Math.random() * 1e12).toString());
-    }
-
-    /**
-    * @description Change the key in the position object
-    * @param {position object} {latitude: ..., longitude: ...}
-    * @returns {Google Maps API position object}
-    */
-    function getposition(coord){
-        return {lat: coord.latitude, lng: coord.longitude};
     }
 
     /**
