@@ -115,6 +115,7 @@ var ViewModel = function() {
         for (var i = 0; i < self.places().length; i++) {
           self.places()[i].setMap(null);
           }
+        self.showSuggestions(false);
       };
 
     // Yelp API and map markers
