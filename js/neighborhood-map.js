@@ -67,7 +67,9 @@ var ViewModel = function() {
         // Add the marker to an observableArray
         self.places.push(marker);
         bounds.extend(marker.position);
-        Model.map.fitBounds(bounds);
+        google.maps.event.addDomListener(window, 'resize', function() {
+          Model.map.fitBounds(bounds);
+        });
         // add a click listener to show infowindow
         marker.addListener('click', function() {
             populateInfoWindow(this, largeInfowindow);
