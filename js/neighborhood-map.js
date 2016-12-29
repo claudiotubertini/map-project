@@ -57,9 +57,16 @@ var ViewModel = function() {
         var marker = new google.maps.Marker({
             position: obj.location,
             title: obj.title,
-            animation: google.maps.Animation.DROP,
+            //animation: google.maps.Animation.DROP,
             icon: defaultIcon,
             map: Model.map
+          });
+        // add a click listener to show infowindow and a bounce animation
+        marker.addListener('click', function() {
+           
+          
+            populateInfoWindow(this, largeInfowindow);
+            this.setIcon(highlightedIcon);
           });
         // Create a "highlighted location" marker color for when the user
         // mouses over the marker.
@@ -70,10 +77,7 @@ var ViewModel = function() {
         google.maps.event.addDomListener(window, 'resize', function() {
           Model.map.fitBounds(bounds);
         });
-        // add a click listener to show infowindow
-        marker.addListener('click', function() {
-            populateInfoWindow(this, largeInfowindow);
-          });
+
         // add an event listener to change markers colour
         marker.addListener('mouseover', function() {
             this.setIcon(highlightedIcon);
@@ -98,6 +102,13 @@ var ViewModel = function() {
     // Show a marker information from Google Map API (an infowindow)
     self.showInfo = function(value){
         populateInfoWindow(value, largeInfowindow);
+        // Model.map.addListener('center_changed', function() {
+        //   // 3 seconds after the center of the map has changed, pan back to the
+        //   // marker.
+        //   window.setTimeout(function() {
+        //     Model.map.panTo(value.position);
+        //   }, 3000);
+        // });
       };
 
     // This function will loop through the markers array and display them all
@@ -184,6 +195,14 @@ var ViewModel = function() {
     function nonce_generate() {
         return (Math.floor(Math.random() * 1e12).toString());
     }
+//marker.addListener('click', toggleBounce);
+    function toggleBounce() {
+            if (marker.getAnimation() !== null) {
+              marker.setAnimation(null);
+            } else {
+              marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+          }
 
     /**
     * @description This function takes a marker and an infowindow, retrieves a streetview
@@ -230,7 +249,15 @@ var ViewModel = function() {
         // 50 meters of the markers position
         streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
         // Open the infowindow on the correct marker.
+        marker.addListener('click', function(){
+         if (marker.getAnimation() !== null) {
+              marker.setAnimation(null);
+            } else {
+              marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        });
         infowindow.open(Model.map, marker);
+        Model.map.panTo(marker.position);
       }
     }
 
@@ -259,14 +286,14 @@ var initMap = function() {
 
     Model.map = new google.maps.Map(document.getElementById('map'), {
         center: {lat:44.493781,lng:11.35143},
-        zoom: 10,
+        zoom: 14,
         mapTypeControl: false,
         styles: styles
       });
     // listen for the window resize event & trigger Google Maps to update too
-    $(window).resize(function() {
-      google.maps.event.trigger(Model.map, "resize");
-    });
+    // $(window).resize(function() {
+    //   google.maps.event.trigger(Model.map, "resize");
+    // });
 
 
     ko.applyBindings(new ViewModel());
