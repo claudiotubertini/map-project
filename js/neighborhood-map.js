@@ -63,8 +63,10 @@ var ViewModel = function() {
           });
         // add a click listener to show infowindow and a bounce animation
         marker.addListener('click', function() {
+            
             populateInfoWindow(this, largeInfowindow);
           });
+
         // Create a "highlighted location" marker color for when the user
         // mouses over the marker.
         var highlightedIcon = makeMarkerIcon('f0e4d3');
@@ -76,19 +78,19 @@ var ViewModel = function() {
         });
 
         // add an event listener to change markers colour
-        marker.addListener('mouseover', function() {
-            this.setIcon(highlightedIcon);
-          });
-        marker.addListener('mouseout', function() {
-            this.setIcon(defaultIcon);
-          });
-        marker.addListener('click', function(){
-         if (this.getAnimation() !== null) {
-              this.setAnimation(null);
-            } else {
-              this.setAnimation(google.maps.Animation.BOUNCE);
-            }
-        });
+        // marker.addListener('mouseover', function() {
+        //     this.setIcon(highlightedIcon);
+        //   });
+        // marker.addListener('mouseout', function() {
+        //     this.setIcon(defaultIcon);
+        //   });
+        // marker.addListener('click', function(){
+        //  if (this.getAnimation() !== null) {
+        //       this.setAnimation(null);
+        //     } else {
+        //       this.setAnimation(google.maps.Animation.BOUNCE);
+        //     }
+        // });
     }
 
     // Search and filter the items (markers) using the input form
@@ -105,6 +107,9 @@ var ViewModel = function() {
 
     // Show a marker information from Google Map API (an infowindow)
     self.showInfo = function(value){
+        //toggleBounce(value);
+        value.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function(){ value.setAnimation(null); }, 3000);
         populateInfoWindow(value, largeInfowindow);
         // Model.map.addListener('center_changed', function() {
         //   // 3 seconds after the center of the map has changed, pan back to the
@@ -200,11 +205,12 @@ var ViewModel = function() {
         return (Math.floor(Math.random() * 1e12).toString());
     }
 //marker.addListener('click', toggleBounce);
-    function toggleBounce() {
+    function toggleBounce(marker) {
             if (marker.getAnimation() !== null) {
               marker.setAnimation(null);
             } else {
               marker.setAnimation(google.maps.Animation.BOUNCE);
+              setTimeout(function(){ marker.setAnimation(null); }, 3000);
             }
           }
 
@@ -253,10 +259,10 @@ var ViewModel = function() {
         // 40 meters of the markers position
         streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
         // Open the infowindow on the correct marker.
-        
         infowindow.open(Model.map, marker);
-
         Model.map.panTo(marker.position);
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function(){ marker.setAnimation(null); }, 3000);
       }
     }
 
