@@ -63,10 +63,7 @@ var ViewModel = function() {
           });
         // add a click listener to show infowindow and a bounce animation
         marker.addListener('click', function() {
-           
-          
             populateInfoWindow(this, largeInfowindow);
-            this.setIcon(highlightedIcon);
           });
         // Create a "highlighted location" marker color for when the user
         // mouses over the marker.
@@ -85,6 +82,13 @@ var ViewModel = function() {
         marker.addListener('mouseout', function() {
             this.setIcon(defaultIcon);
           });
+        marker.addListener('click', function(){
+         if (this.getAnimation() !== null) {
+              this.setAnimation(null);
+            } else {
+              this.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        });
     }
 
     // Search and filter the items (markers) using the input form
@@ -246,17 +250,12 @@ var ViewModel = function() {
           }
         }
         // Use streetview service to get the closest streetview image within
-        // 50 meters of the markers position
+        // 40 meters of the markers position
         streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
         // Open the infowindow on the correct marker.
-        marker.addListener('click', function(){
-         if (marker.getAnimation() !== null) {
-              marker.setAnimation(null);
-            } else {
-              marker.setAnimation(google.maps.Animation.BOUNCE);
-            }
-        });
+        
         infowindow.open(Model.map, marker);
+
         Model.map.panTo(marker.position);
       }
     }
