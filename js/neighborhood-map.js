@@ -63,7 +63,6 @@ var ViewModel = function() {
           });
         // add a click listener to show infowindow and a bounce animation
         marker.addListener('click', function() {
-            
             populateInfoWindow(this, largeInfowindow);
           });
 
@@ -78,12 +77,12 @@ var ViewModel = function() {
         });
 
         // add an event listener to change markers colour
-        // marker.addListener('mouseover', function() {
-        //     this.setIcon(highlightedIcon);
-        //   });
-        // marker.addListener('mouseout', function() {
-        //     this.setIcon(defaultIcon);
-        //   });
+        marker.addListener('mouseover', function() {
+            this.setIcon(highlightedIcon);
+          });
+        marker.addListener('mouseout', function() {
+            this.setIcon(defaultIcon);
+          });
         // marker.addListener('click', function(){
         //  if (this.getAnimation() !== null) {
         //       this.setAnimation(null);
@@ -97,36 +96,53 @@ var ViewModel = function() {
     self.filteredItems = ko.computed(function() {
         var filter = self.filter().toLowerCase();
         if (!filter) {
+            self.hideListings();
             return self.places();
         } else {
             return ko.utils.arrayFilter(self.places(), function(item) {
-                return item.title.toLowerCase().indexOf(filter) > -1;
+              if (item.title.toLowerCase().indexOf(filter) > -1){
+                //return item.title.toLowerCase().indexOf(filter) > -1;
+                item.setVisible(true);
+                return true;
+              } else {
+                item.setVisible(false);
+                return false;
+              }
             });
         }
     }, self);
 
+// ko.extenders.showMarker = function(target, option) {
+//     target.subscribe(function(newValue) {
+//        console.log(option + ": " + newValue);
+//     });
+//     return target;
+// };
+    // for (var i = 0; i < self.filteredItems().length; i++) {
+    //       self.filteredItems()[i].setMap(Model.map);
+    //     }
+
+
+
+
+
+
+
     // Show a marker information from Google Map API (an infowindow)
     self.showInfo = function(value){
-        //toggleBounce(value);
         value.setAnimation(google.maps.Animation.BOUNCE);
         setTimeout(function(){ value.setAnimation(null); }, 3000);
         populateInfoWindow(value, largeInfowindow);
-        // Model.map.addListener('center_changed', function() {
-        //   // 3 seconds after the center of the map has changed, pan back to the
-        //   // marker.
-        //   window.setTimeout(function() {
-        //     Model.map.panTo(value.position);
-        //   }, 3000);
-        // });
       };
 
     // This function will loop through the markers array and display them all
     // and extend the boundaries of the map
     self.showListings = function () {
         var bounds = new google.maps.LatLngBounds();
-
+        self.hideListings();
         for (var i = 0; i < self.filteredItems().length; i++) {
-          self.filteredItems()[i].setMap(Model.map);
+          self.filteredItems()[i].setVisible(true);
+          //self.filteredItems()[i].setMap(Model.map);
           bounds.extend(self.filteredItems()[i].position);
           }
         Model.map.fitBounds(bounds);
@@ -135,10 +151,14 @@ var ViewModel = function() {
     // This function will loop through the markers and hide them all.
     self.hideListings =  function () {
         for (var i = 0; i < self.places().length; i++) {
-          self.places()[i].setMap(null);
+          self.places()[i].setVisible(false);
+          largeInfowindow.close();
+          //self.places()[i].setMap(null);
           }
         self.showSuggestions(false);
       };
+
+
 
     // Yelp API and map markers
     // ================================

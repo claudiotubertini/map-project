@@ -29,7 +29,7 @@
  
           
           <div id="searchItems" class="collapse navbar-collapse">
-              <input type="text" class="form-control input-sm"  data-bind="textInput: filter, event: {mouseover: hideListings, mouseout: showListings}"  placeholder="Search" />
+              <input type="text" class="form-control input-sm"  data-bind="textInput: filter, event: { click: hideListings} "  placeholder="Search" />
 
 
               <div class="panel-body" data-bind="foreach: filteredItems">
