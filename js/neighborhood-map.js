@@ -96,7 +96,9 @@ var ViewModel = function() {
     self.filteredItems = ko.computed(function() {
         var filter = self.filter().toLowerCase();
         if (!filter) {
-            self.hideListings();
+            for (var i = 0; i < self.places().length; i++) {
+                self.places()[i].setVisible(true);
+              }
             return self.places();
         } else {
             return ko.utils.arrayFilter(self.places(), function(item) {
