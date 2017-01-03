@@ -35,11 +35,11 @@ var ViewModel = function() {
     self.showSuggestions = ko.observable(false);
     self.showError = ko.observable(false);
 
-    if(Model.map == null){
-        self.showMapMessage(false);
-      } else {
-        self.showMapMessage(true);
-      }
+    // if(Model.map == null){
+    //     self.showMapMessage(true);
+    //   } else {
+    //     self.showMapMessage(false);
+    //   }
 
     // Google Map API markers
     // =================================

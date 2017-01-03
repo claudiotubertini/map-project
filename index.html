@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html> -->
+<!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html, charset=UTF-8" />
@@ -9,10 +9,6 @@
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
    <link rel="stylesheet" href="css/map.css" >
-    <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript" src="js/knockout-3.4.1.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/oauth-signature.min.js"></script>
 
   </head>
 <body>
@@ -21,13 +17,13 @@
       <div class="col-sm-4">
         <div class="panel panel-default">
           <div class="panel-heading">
-          
+
               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#searchItems">
                 <span class="glyphicon glyphicon-menu-hamburger"></span></button>
-              <h5>Your preferred restaurants</h5>
+              <h5>Where I like to eat in Bologna</h5>
           </div>
- 
-          
+
+
           <div id="searchItems" class="collapse navbar-collapse">
               <input type="text" class="form-control input-sm"  data-bind="textInput: filter, event: { click: hideListings} "  placeholder="Search" />
 
@@ -37,7 +33,7 @@
               </div>
               <div class="panel-heading" data-bind="visible: !showSuggestions()">
                   <p>Click on the name of the restaurant for more information (from <a href="https://www.yelp.com/">Yelp</a>)</p>
-                 
+
               </div>
 
 
@@ -45,28 +41,34 @@
                 <p><span class="glyphicon glyphicon-new-window" aria-hidden="true" data-bind="visible: showSuggestions"></span><a target="_blank" data-bind="attr: { href: url }"><span data-bind="text: name"></span> </a></p>
                 <p data-bind="text: reviews"></p>
               </div>
-              
+
               <div id="nosuggestions" class="alert alert-danger panel-body" role="alert" data-bind="visible: showError">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span class="sr-only">Error:</span>
                     No information is available for this place
               </div>
-          </div>        
+          </div>
         </div>
       </div>
 
-      <div class="col-sm-8" id="map" data-bind="visible: showMapMessage">
-        <p>No map could be loaded</p>
+      <div class="col-sm-8" id="map">
+        
       </div>
     </div>
   </div>
 
    <!-- core javascript -->
    <!-- ======================================================= -->
-   <script src = "https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyBZR08CuagYkwAw6KeJBry2pZpiULeYuhM&v=3&callback=initMap"
+    <script type="text/javascript" src="js/jquery-3.1.1.min.js" ></script>
+    <script type="text/javascript" src="js/knockout-3.4.1.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/oauth-signature.min.js" async></script>
+
+   <script src="https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyBZR08CuagYkwAw6KeJBry2pZpiULeYuhM&v=3&callback=initMap"
    async defer>
    </script>
-   <script type="text/javascript" src="js/map.js"></script>
-   <script type="text/javascript" src="js/neighborhood-map.js"></script>
+   <script type="text/javascript" src="js/map.js" async></script>
+   <script type="text/javascript" src="js/neighborhood-map.js" async></script>
  </body>
 </html>
+
