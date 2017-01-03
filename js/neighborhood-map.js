@@ -25,7 +25,7 @@ var ViewModel = function() {
 
     var self = this;
 
-    self.showMapMessage = ko.observable(false);
+    //self.showMapMessage = ko.observable(false);
     self.places = ko.observableArray();
     self.url = ko.observable();
     self.name = ko.observable();
@@ -35,11 +35,15 @@ var ViewModel = function() {
     self.showSuggestions = ko.observable(false);
     self.showError = ko.observable(false);
 
-    if(Model.map == null){
-        self.showMapMessage(false);
-      } else {
-        self.showMapMessage(true);
-      }
+    // if(Model.map == null){
+    //     self.showMapMessage(false);
+    //   } else {
+    //     self.showMapMessage(true);
+    //   }
+
+
+
+
 
     // Google Map API markers
     // =================================
@@ -226,7 +230,7 @@ var ViewModel = function() {
     function nonce_generate() {
         return (Math.floor(Math.random() * 1e12).toString());
     }
-//marker.addListener('click', toggleBounce);
+    //marker.addListener('click', toggleBounce);
     function toggleBounce(marker) {
             if (marker.getAnimation() !== null) {
               marker.setAnimation(null);
@@ -305,7 +309,6 @@ var ViewModel = function() {
           new google.maps.Size(21,34));
         return markerImage;
       }
-
 };
 
 //Function to load map and start up app
@@ -317,12 +320,20 @@ var initMap = function() {
         mapTypeControl: false,
         styles: styles
       });
-    // listen for the window resize event & trigger Google Maps to update too
-    // $(window).resize(function() {
-    //   google.maps.event.trigger(Model.map, "resize");
-    // });
 
 
     ko.applyBindings(new ViewModel());
+};
+
+var googleError = function(){
+  alert( "Error: no map available" );
+  // $( "#map" )
+    //   .error(function() {
+    //     alert( "Error: no map available" )
+    //   })
+    //   .attr({
+    //     src:"staticmap.png", 
+    //     class:"img-responsive"
+    //     });
 
 };

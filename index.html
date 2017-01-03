@@ -38,21 +38,20 @@
 
 
               <div class="panel-body" id="suggestions" data-bind="visible: showSuggestions">
-                <p><span class="glyphicon glyphicon-new-window" aria-hidden="true" data-bind="visible: showSuggestions"></span><a target="_blank" data-bind="attr: { href: url }"><span data-bind="text: name"></span> </a></p>
+                <p data-bind="visible: showSuggestions"><span class="glyphicon glyphicon-new-window" aria-hidden="true" data-bind="visible: showSuggestions"></span><a target="_blank" data-bind="attr: { href: url }"><span data-bind="text: name"></span> </a></p>
                 <p data-bind="text: reviews"></p>
               </div>
 
               <div id="nosuggestions" class="alert alert-danger panel-body" role="alert" data-bind="visible: showError">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span class="sr-only">Error:</span>
-                    No information is available for this place
+                    No information is available from Yelp
               </div>
           </div>
         </div>
       </div>
 
-      <div class="col-sm-8" id="map" data-bind="visible: showMapMessage">
-        <h1>No map could be loaded</h1>
+      <div class="col-sm-8" id="map">
       </div>
     </div>
   </div>
@@ -63,12 +62,14 @@
     <script type="text/javascript" src="js/knockout-3.4.1.js" ></script>
     <script type="text/javascript" src="js/bootstrap.min.js" ></script>
     <script type="text/javascript" src="js/oauth-signature.min.js" async></script>
-
-   <script async src = "https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyBZR08CuagYkwAw6KeJBry2pZpiULeYuhM&v=3&callback=initMap"
+    
+<script type="text/javascript" src="js/neighborhood-map.js" async></script>
+ <script type="text/javascript" src="js/map.js" async></script>
+   <script src = "https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyBZR08CuagYkwAw6KeJBry2pZpiULeYuhM&v=3&callback=initMap" onerror="googleError()"
    async defer>
    </script>
-   <script type="text/javascript" src="js/map.js" async></script>
-   <script type="text/javascript" src="js/neighborhood-map.js" async></script>
+  
+   
  </body>
 </html>
 
