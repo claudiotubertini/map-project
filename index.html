@@ -20,7 +20,7 @@
 
               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#searchItems">
                 <span class="glyphicon glyphicon-menu-hamburger"></span></button>
-              <h5>Where I like to eat in Bologna</h5>
+              <h5>Where I like to eat in Bologna <small>by Claudio Tubertini</small></h5>
           </div>
 
 
@@ -51,20 +51,20 @@
         </div>
       </div>
 
-      <div class="col-sm-8" id="map">
-        
+      <div class="col-sm-8" id="map" data-bind="visible: showMapMessage">
+        <h1>No map could be loaded</h1>
       </div>
     </div>
   </div>
 
    <!-- core javascript -->
    <!-- ======================================================= -->
-    <script type="text/javascript" src="js/jquery-3.1.1.min.js" ></script>
-    <script type="text/javascript" src="js/knockout-3.4.1.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="js/knockout-3.4.1.js" ></script>
+    <script type="text/javascript" src="js/bootstrap.min.js" ></script>
     <script type="text/javascript" src="js/oauth-signature.min.js" async></script>
 
-   <script src="https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyBZR08CuagYkwAw6KeJBry2pZpiULeYuhM&v=3&callback=initMap"
+   <script async src = "https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyBZR08CuagYkwAw6KeJBry2pZpiULeYuhM&v=3&callback=initMap"
    async defer>
    </script>
    <script type="text/javascript" src="js/map.js" async></script>
