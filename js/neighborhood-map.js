@@ -13,7 +13,7 @@ var Model = {
     ]
 };
 
-//VIEW MODEL 
+//VIEW MODEL
 var ViewModel = function() {
 
     // constants to be used with Yelp api
@@ -35,11 +35,7 @@ var ViewModel = function() {
     self.showSuggestions = ko.observable(false);
     self.showError = ko.observable(false);
 
-    // if(Model.map == null){
-    //     self.showMapMessage(false);
-    //   } else {
-    //     self.showMapMessage(true);
-    //   }
+
 
 
 
@@ -196,32 +192,59 @@ var ViewModel = function() {
 
       var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, YELP_KEY_SECRET, YELP_TOKEN_SECRET);
       parameters.oauth_signature = encodedSignature;
-
+var apiTimeout = setTimeout(function() {
+    alert('Sorry: something went wrong and we failed to load data from Yelp');
+}, 5000);
       var settings = {
         url: yelp_url,
         data: parameters,
         cache: true,
         dataType: 'jsonp',
         success: function(results) {
+          clearTimeout(apiTimeout);
           self.showSuggestions(true);
           self.name(results.name);
           self.url(results.url);
           self.reviews(results.reviews[0]['excerpt']);
           },
         error: function(xhr, ajaxOptions, thrownError) {
-          if(xhr.status==400) {
-              self.showSuggestions(false);
-          } else {
-              self.showError(true);
-          }
+          self.showSuggestions(false);
+          self.showError(true);
+          // if(xhr.status==400) {
+          //     self.showSuggestions(false);
+          // } else {
+          //     self.showError(true);
+          // }
         }
       };
       // Send AJAX query via jQuery library.
       $.ajax(settings);
+
+      // $.ajaxSetup({
+      //   error: function(jqXHR, exception) {
+      //       if (jqXHR.status === 0) {
+      //           alert('Possible API Connection issue: Please verify your network connection.');
+      //       } else if (jqXHR.status == 404) {
+      //           alert('Requested page not found. [404]');
+      //       } else if (jqXHR.status == 500) {
+      //           alert('Internal Server Error [500].');
+      //       } else if (exception === 'parsererror') {
+      //           alert('Requested JSON parse failed.');
+      //       } else if (exception === 'timeout') {
+      //           alert('Time out error.');
+      //       } else if (exception === 'abort') {
+      //           alert('Ajax request aborted.');
+      //       } else {
+      //           alert('Uncaught Error.\n' + jqXHR.responseText);
+      //       }
+      //   }
+      // });
     };
 
     // Helper functions
     // **********************************
+
+
 
     /**
     * @description Generate a random number, an integer, then casted to string, to be used in Yelp parameters
@@ -236,7 +259,7 @@ var ViewModel = function() {
               marker.setAnimation(null);
             } else {
               marker.setAnimation(google.maps.Animation.BOUNCE);
-              setTimeout(function(){ marker.setAnimation(null); }, 3000);
+              setTimeout(function(){ marker.setAnimation(null); }, 5000);
             }
           }
 
@@ -309,9 +332,24 @@ var ViewModel = function() {
           new google.maps.Size(21,34));
         return markerImage;
       }
+
+
+
+};
+var googleError = function(){
+  alert( "Error: no map available" );
+  // $( "#map" )
+    //   .error(function() {
+    //     alert( "Error: no map available" )
+    //   })
+    //   .attr({
+    //     src:"staticmap.png",
+    //     class:"img-responsive"
+    //     });
+
 };
 
-//Function to load map and start up app
+// function to load map and start up app
 var initMap = function() {
 
     Model.map = new google.maps.Map(document.getElementById('map'), {
@@ -325,15 +363,4 @@ var initMap = function() {
     ko.applyBindings(new ViewModel());
 };
 
-var googleError = function(){
-  alert( "Error: no map available" );
-  // $( "#map" )
-    //   .error(function() {
-    //     alert( "Error: no map available" )
-    //   })
-    //   .attr({
-    //     src:"staticmap.png", 
-    //     class:"img-responsive"
-    //     });
 
-};
