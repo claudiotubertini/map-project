@@ -25,7 +25,7 @@
 
 
                   <section id="searchItems" class="collapse navbar-collapse">
-                      <input type="text" class="form-control input-sm"  data-bind="textInput: filter, event: { click: hideListings} "  placeholder="Search" />
+                      <input type="text" class="form-control input-sm"  data-bind="textInput: filter"  placeholder="Search" />
 
 
                       <div class="panel-body" data-bind="foreach: filteredItems">
@@ -52,7 +52,7 @@
           </section>
 
 
-          <map class="col-sm-8" id="map"></map>
+          <div class="col-sm-8" id="map"></div>
     </main>
   </div>
 
@@ -61,7 +61,6 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.1/knockout-min.js" ></script>
       <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" ></script>
-
 
     <script type="text/javascript" src="js/oauth-signature.min.js" async></script>
 
