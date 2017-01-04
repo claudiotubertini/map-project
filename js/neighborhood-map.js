@@ -25,7 +25,6 @@ var ViewModel = function() {
 
     var self = this;
 
-    //self.showMapMessage = ko.observable(false);
     self.places = ko.observableArray();
     self.url = ko.observable();
     self.name = ko.observable();
@@ -34,12 +33,6 @@ var ViewModel = function() {
     self.yelpMarker = ko.observableArray();
     self.showSuggestions = ko.observable(false);
     self.showError = ko.observable(false);
-
-
-
-
-
-
 
     // Google Map API markers
     // =================================
@@ -75,7 +68,6 @@ var ViewModel = function() {
         google.maps.event.addDomListener(window, 'resize', function() {
           Model.map.fitBounds(bounds);
         });
-
         // add an event listener to change markers colour
         marker.addListener('mouseover', function() {
             this.setIcon(highlightedIcon);
@@ -83,13 +75,6 @@ var ViewModel = function() {
         marker.addListener('mouseout', function() {
             this.setIcon(defaultIcon);
           });
-        // marker.addListener('click', function(){
-        //  if (this.getAnimation() !== null) {
-        //       this.setAnimation(null);
-        //     } else {
-        //       this.setAnimation(google.maps.Animation.BOUNCE);
-        //     }
-        // });
     }
 
     // Search and filter the items (markers) using the input form
@@ -103,7 +88,6 @@ var ViewModel = function() {
         } else {
             return ko.utils.arrayFilter(self.places(), function(item) {
               if (item.title.toLowerCase().indexOf(filter) > -1){
-                //return item.title.toLowerCase().indexOf(filter) > -1;
                 item.setVisible(true);
                 return true;
               } else {
@@ -113,22 +97,6 @@ var ViewModel = function() {
             });
         }
     }, self);
-
-// ko.extenders.showMarker = function(target, option) {
-//     target.subscribe(function(newValue) {
-//        console.log(option + ": " + newValue);
-//     });
-//     return target;
-// };
-    // for (var i = 0; i < self.filteredItems().length; i++) {
-    //       self.filteredItems()[i].setMap(Model.map);
-    //     }
-
-
-
-
-
-
 
     // Show a marker information from Google Map API (an infowindow)
     self.showInfo = function(value){
@@ -160,8 +128,6 @@ var ViewModel = function() {
         self.showSuggestions(false);
       };
 
-
-
     // Yelp API and map markers
     // ================================
     // shows results from Yelp API using Ajax
@@ -192,16 +158,18 @@ var ViewModel = function() {
 
       var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, YELP_KEY_SECRET, YELP_TOKEN_SECRET);
       parameters.oauth_signature = encodedSignature;
-var apiTimeout = setTimeout(function() {
-    alert('Sorry: something went wrong and we failed to load data from Yelp');
-}, 5000);
+      // if yelp do not respond in 5 sec an alert is triggered
+      var apiTimeout = setTimeout(function() {
+          alert('Sorry: something went wrong and we failed to load data from Yelp');
+      }, 5000);
+
       var settings = {
         url: yelp_url,
         data: parameters,
         cache: true,
         dataType: 'jsonp',
         success: function(results) {
-          clearTimeout(apiTimeout);
+          clearTimeout(apiTimeout); // timeout is stopped
           self.showSuggestions(true);
           self.name(results.name);
           self.url(results.url);
@@ -210,41 +178,14 @@ var apiTimeout = setTimeout(function() {
         error: function(xhr, ajaxOptions, thrownError) {
           self.showSuggestions(false);
           self.showError(true);
-          // if(xhr.status==400) {
-          //     self.showSuggestions(false);
-          // } else {
-          //     self.showError(true);
-          // }
         }
       };
       // Send AJAX query via jQuery library.
       $.ajax(settings);
-
-      // $.ajaxSetup({
-      //   error: function(jqXHR, exception) {
-      //       if (jqXHR.status === 0) {
-      //           alert('Possible API Connection issue: Please verify your network connection.');
-      //       } else if (jqXHR.status == 404) {
-      //           alert('Requested page not found. [404]');
-      //       } else if (jqXHR.status == 500) {
-      //           alert('Internal Server Error [500].');
-      //       } else if (exception === 'parsererror') {
-      //           alert('Requested JSON parse failed.');
-      //       } else if (exception === 'timeout') {
-      //           alert('Time out error.');
-      //       } else if (exception === 'abort') {
-      //           alert('Ajax request aborted.');
-      //       } else {
-      //           alert('Uncaught Error.\n' + jqXHR.responseText);
-      //       }
-      //   }
-      // });
     };
 
     // Helper functions
     // **********************************
-
-
 
     /**
     * @description Generate a random number, an integer, then casted to string, to be used in Yelp parameters
@@ -253,15 +194,6 @@ var apiTimeout = setTimeout(function() {
     function nonce_generate() {
         return (Math.floor(Math.random() * 1e12).toString());
     }
-    //marker.addListener('click', toggleBounce);
-    function toggleBounce(marker) {
-            if (marker.getAnimation() !== null) {
-              marker.setAnimation(null);
-            } else {
-              marker.setAnimation(google.maps.Animation.BOUNCE);
-              setTimeout(function(){ marker.setAnimation(null); }, 5000);
-            }
-          }
 
     /**
     * @description This function takes a marker and an infowindow, retrieves a streetview
@@ -311,7 +243,8 @@ var apiTimeout = setTimeout(function() {
         infowindow.open(Model.map, marker);
         Model.map.panTo(marker.position);
         marker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function(){ marker.setAnimation(null); }, 3000);
+        setTimeout(function(){ marker.setAnimation(null); }, 5000);
+
       }
     }
 
@@ -333,20 +266,10 @@ var apiTimeout = setTimeout(function() {
         return markerImage;
       }
 
-
-
 };
+// in case something is wrong with google api
 var googleError = function(){
   alert( "Error: no map available" );
-  // $( "#map" )
-    //   .error(function() {
-    //     alert( "Error: no map available" )
-    //   })
-    //   .attr({
-    //     src:"staticmap.png",
-    //     class:"img-responsive"
-    //     });
-
 };
 
 // function to load map and start up app

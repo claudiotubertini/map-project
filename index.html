@@ -14,45 +14,45 @@
 <body>
   <div class="container">
     <main class="row">
-      <div class="col-sm-4">
-        <div class="panel panel-default">
-          <nav class="panel-heading">
+          <section class="col-sm-4">
+            <div class="panel panel-default">
+                  <nav class="panel-heading">
 
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#searchItems">
-                <span class="glyphicon glyphicon-menu-hamburger"></span></button>
-              <h5>Where I like to eat in Bologna <small>by Claudio Tubertini</small></h5>
-          </nav>
-
-
-          <div id="searchItems" class="collapse navbar-collapse">
-              <input type="text" class="form-control input-sm"  data-bind="textInput: filter, event: { click: hideListings} "  placeholder="Search" />
+                      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#searchItems">
+                        <span class="glyphicon glyphicon-menu-hamburger"></span></button>
+                      <h5>Where I like to eat in Bologna <small>by Claudio Tubertini</small></h5>
+                  </nav>
 
 
-              <div class="panel-body" data-bind="foreach: filteredItems">
-                <p data-bind="text: title, click: function(){$parent.showInfo($data); $parent.yelpdata($data)}"></p>
-              </div>
-              <div class="panel-heading" data-bind="visible: !showSuggestions()">
-                  <p>Click on the name of the restaurant for more information (from <a href="https://www.yelp.com/">Yelp</a>)</p>
-
-              </div>
+                  <section id="searchItems" class="collapse navbar-collapse">
+                      <input type="text" class="form-control input-sm"  data-bind="textInput: filter, event: { click: hideListings} "  placeholder="Search" />
 
 
-              <div class="panel-body" id="suggestions" data-bind="visible: showSuggestions">
-                <p><span class="glyphicon glyphicon-new-window" aria-hidden="true" data-bind="if: showSuggestions"></span><a target="_blank" data-bind="attr: { href: url }"><span data-bind="text: name"></span> </a></p>
-                <p data-bind="text: reviews"></p>
-              </div>
+                      <div class="panel-body" data-bind="foreach: filteredItems">
+                        <p data-bind="text: title, click: function(){$parent.showInfo($data); $parent.yelpdata($data)}"></p>
+                      </div>
+                      <div class="panel-heading" data-bind="visible: !showSuggestions()">
+                          <p>Click on the name of the restaurant for more information (from <a href="https://www.yelp.com/">Yelp</a>)</p>
 
-              <div id="nosuggestions" class="alert alert-danger panel-body" role="alert" data-bind="visible: showError">
-                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                <span class="sr-only">Error:</span>
-                    No information is available from Yelp
-              </div>
-          </div>
-        </div>
-      </div>
+                      </div>
 
-      <map class="col-sm-8" id="map">
-      </map>
+
+                      <div class="panel-body" id="suggestions" data-bind="visible: showSuggestions">
+                        <p><span class="glyphicon glyphicon-new-window" aria-hidden="true" data-bind="if: showSuggestions"></span><a target="_blank" data-bind="attr: { href: url }"><span data-bind="text: name"></span> </a></p>
+                        <p data-bind="text: reviews"></p>
+                      </div>
+
+                      <div id="nosuggestions" class="alert alert-danger panel-body" role="alert" data-bind="visible: showError">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                            No information is available from Yelp
+                      </div>
+                  </section>
+            </div>
+          </section>
+
+
+          <map class="col-sm-8" id="map"></map>
     </main>
   </div>
 
